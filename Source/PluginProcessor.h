@@ -1,52 +1,58 @@
-#pragma once
+```cpp
+Copy#pragma once
 
-#include <juce\_audio\_processors/juce\_audio\_processors.h> #include "Parameters.h" #include "DSP/AvalancheEngine.h" #include "SampleRateAdapter.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+#include "Parameters.h"
+#include "DSP/SpaceEngine.h"
+#include "LevelMeter.h"
+#include "PresetManager.h"
 
-class AvalanchePlugin : public juce::AudioProcessor { public: AvalanchePlugin(); ~AvalanchePlugin() override = default;
+class EMSpacePlugin : public juce::AudioProcessor {
+public:
+    EMSpacePlugin();
+    ~EMSpacePlugin() override = default;
 
-```
-void prepareToPlay(double sampleRate, int samplesPerBlock) override;
-void releaseResources() override;
-void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
+    void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
-juce::AudioProcessorEditor* createEditor() override;
-bool hasEditor() const override { return true; }
+    juce::AudioProcessorEditor* createEditor() override;
+    bool hasEditor() const override { return true; }
 
-const juce::String getName() const override
-{
-    return "EMverb Avalanche";
-}
-bool acceptsMidi() const override { return false; }
-bool producesMidi() const override { return false; }
-double getTailLengthSeconds() const override { return 8.0; }
+    const juce::String getName() const override { return "EMSpace"; }
+    bool acceptsMidi() const override { return false; }
+    bool producesMidi() const override { return false; }
+    double getTailLengthSeconds() const override { return 8.0; }
 
-int getNumPrograms() override { return 1; }
-int getCurrentProgram() override { return 0; }
-void setCurrentProgram(int) override {}
-const juce::String getProgramName(int) override { return {}; }
-void changeProgramName(int, const juce::String&) override {}
+    int getNumPrograms() override { return 1; }
+    int getCurrentProgram() override { return 0; }
+    void setCurrentProgram(int) override {}
+    const juce::String getProgramName(int) override { return {}; }
+    void changeProgramName(int, const juce::String&) override {}
 
-void getStateInformation(juce::MemoryBlock& destData) override;
-void setStateInformation(const void* data, int sizeInBytes) override;
+    void getStateInformation(juce::MemoryBlock& destData) override;
+    void setStateInformation(const void* data, int sizeInBytes) override;
 
-juce::AudioProcessorValueTreeState apvts;
+    juce::AudioProcessorValueTreeState apvts;
+    PresetManager presetManager;
+    LevelMeter levelMeter;
 
-/// Expose engine for GUI meter access (read-only from GUI)
-AvalancheEngine& getEngine() { return engine_; }
-```
+private:
+    std::atomic<float>* delayTimeParam    = nullptr;
+    std::atomic<float>* delayFeedbackParam = nullptr;
+    std::atomic<float>* delayToneParam    = nullptr;
+    std::atomic<float>* delayMixParam     = nullptr;
+    std::atomic<float>* reverbDecayParam  = nullptr;
+    std::atomic<float>* reverbDampParam   = nullptr;
+    std::atomic<float>* reverbMixParam    = nullptr;
+    std::atomic<float>* diffusionParam    = nullptr;
+    std::atomic<float>* crossFeedParam    = nullptr;
+    std::atomic<float>* modSpeedParam     = nullptr;
+    std::atomic<float>* modDepthParam     = nullptr;
 
-private: std::atomic\* delayTimeParam = nullptr; std::atomic\* delayFeedbackParam = nullptr; std::atomic\* delayToneParam = nullptr; std::atomic\* delayMixParam = nullptr; std::atomic\* reverbDecayParam = nullptr; std::atomic\* reverbDampingParam = nullptr; std::atomic\* reverbMixParam = nullptr; std::atomic\* diffusionParam = nullptr; std::atomic\* crossFeedParam = nullptr; std::atomic\* modDepthParam = nullptr; std::atomic\* modeParam = nullptr;
+    SpaceEngine engine_;
 
-```
-AvalancheEngine engine_;
-SampleRateAdapter adapter_;
-juce::AudioBuffer<float> dryBuffer_;
-```
-
-#if JUCE\_DEBUG int debugLogCounter\_ = 0; #endif
-
-```
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AvalanchePlugin)
-```
-
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EMSpacePlugin)
 };
+Copy
+```
