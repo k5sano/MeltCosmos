@@ -1,1 +1,8 @@
+```
 build/
+.claude/*.log
+.claude/build-errors.txt
+.claude/escalation-report.md
+.claude/pluginval-output.log
+.claude/analyzer-output.log
+```
