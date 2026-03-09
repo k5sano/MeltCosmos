@@ -30,6 +30,9 @@ void getStateInformation(juce::MemoryBlock& destData) override;
 void setStateInformation(const void* data, int sizeInBytes) override;
 
 juce::AudioProcessorValueTreeState apvts;
+
+/// Expose engine for GUI meter access (read-only from GUI)
+AvalancheEngine& getEngine() { return engine_; }
 ```
 
 private: std::atomic\* delayTimeParam = nullptr; std::atomic\* delayFeedbackParam = nullptr; std::atomic\* delayToneParam = nullptr; std::atomic\* delayMixParam = nullptr; std::atomic\* reverbDecayParam = nullptr; std::atomic\* reverbDampingParam = nullptr; std::atomic\* reverbMixParam = nullptr; std::atomic\* diffusionParam = nullptr; std::atomic\* crossFeedParam = nullptr; std::atomic\* modDepthParam = nullptr; std::atomic\* modeParam = nullptr;
@@ -38,7 +41,11 @@ private: std::atomic\* delayTimeParam = nullptr; std::atomic\* delayFeedbackPara
 AvalancheEngine engine_;
 SampleRateAdapter adapter_;
 juce::AudioBuffer<float> dryBuffer_;
+```
 
+#if JUCE\_DEBUG int debugLogCounter\_ = 0; #endif
+
+```
 JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AvalanchePlugin)
 ```
 
