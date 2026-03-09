@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DattorroReverb.h" #include "ModDelay.h"
+#include "DattorroReverb.h" #include "ModDelay.h" #include "LevelMeter.h"
 
 /// Avalanche Engine: Mod Delay + Dattorro Reverb with cross-feed. /// Designed to be called at 32 kHz internal sample rate via SampleRateAdapter. /// Provides the same process(float\*, float\*, int) interface as DattorroReverb /// so SampleRateAdapter can drive it without modification. class AvalancheEngine { public: AvalancheEngine(); ~AvalancheEngine() = default;
 
@@ -27,6 +27,14 @@ void setDiffusion(float diff);
 void setCrossFeed(float amount);
 void setModDepth(float depth);
 void setMode(int mode);
+
+// --- Debug level meters (read from GUI thread) ---
+LevelMeter meterInput;
+LevelMeter meterDelayOut;
+LevelMeter meterReverbIn;
+LevelMeter meterReverbOut;
+LevelMeter meterCrossFeed;
+LevelMeter meterOutput;
 ```
 
 private: ModDelay delay\_; DattorroReverb reverb\_;
