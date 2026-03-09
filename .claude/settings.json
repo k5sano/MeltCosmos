@@ -1,0 +1,29 @@
+```json
+Copy{
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Edit(Source/**)",
+      "Edit(CMakeLists.txt)",
+      "Edit(Tests/**)",
+      "Edit(scripts/**)",
+      "Bash(cmake*)",
+      "Bash(ctest*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git checkout*)",
+      "Bash(git stash*)",
+      "Bash(git commit*)",
+      "Bash(cat*)",
+      "Bash(ls*)",
+      "Bash(grep*)",
+      "Bash(bash scripts/*)"
+    ],
+    "deny": [
+      "Bash(rm -rf*)",
+      "Bash(sudo*)"
+    ]
+  }
+}
+```
