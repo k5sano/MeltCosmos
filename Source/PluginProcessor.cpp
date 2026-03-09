@@ -17,7 +17,6 @@ const int numSamples  = buffer.getNumSamples();
 if (numChannels < 2 || numSamples == 0)
     return;
 
-// Read all parameters
 engine_.setDelayTime(delayTimeParam->load());
 engine_.setDelayFeedback(delayFeedbackParam->load());
 engine_.setDelayTone(delayToneParam->load());
@@ -42,7 +41,7 @@ const float* inR = dryBuffer_.getReadPointer(1);
 adapter_.process(inL, inR, outL, outR, numSamples, engine_);
 ```
 
-}
+#if JUCE\_DEBUG debugLogCounter\_ += numSamples; // Log every ~1 second (assuming 44100 Hz host) if (debugLogCounter\_ >= 44100) { debugLogCounter\_ = 0; auto in = engine\_.meterInput.getAndReset(); auto dO = engine\_.meterDelayOut.getAndReset(); auto rI = engine\_.meterReverbIn.getAndReset(); auto rO = engine\_.meterReverbOut.getAndReset(); auto xf = engine\_.meterCrossFeed.getAndReset(); auto out = engine\_.meterOutput.getAndReset(); DBG("\[EMverb Avalanche DEBUG LEVELS\]"); DBG(" Input: Peak=" + juce::String(in.peakDb, 1) + "dB RMS=" + juce::String(in.rmsDb, 1) + "dB"); DBG(" DelayOut: Peak=" + juce::String(dO.peakDb, 1) + "dB RMS=" + juce::String(dO.rmsDb, 1) + "dB"); DBG(" ReverbIn: Peak=" + juce::String(rI.peakDb, 1) + "dB RMS=" + juce::String(rI.rmsDb, 1) + "dB"); DBG(" ReverbOut: Peak=" + juce::String(rO.peakDb, 1) + "dB RMS=" + juce::String(rO.rmsDb, 1) + "dB"); DBG(" CrossFeed: Peak=" + juce::String(xf.peakDb, 1) + "dB RMS=" + juce::String(xf.rmsDb, 1) + "dB"); DBG(" Output: Peak=" + juce::String(out.peakDb, 1) + "dB RMS=" + juce::String(out.rmsDb, 1) + "dB"); } #endif }
 
 juce::AudioProcessorEditor\* AvalanchePlugin::createEditor() { return new AvalancheEditor(\*this); }
 
