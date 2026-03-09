@@ -1,42 +1,68 @@
-#pragma once
+```cpp
+Copy#pragma once
 
-#include <juce\_audio\_processors/juce\_audio\_processors.h> #include "PluginProcessor.h" #include "DSP/LevelMeter.h"
+#include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+#include "PluginProcessor.h"
 
-class AvalancheEditor : public juce::AudioProcessorEditor, private juce::Timer { public: explicit AvalancheEditor(AvalanchePlugin&); ~AvalancheEditor() override;
+class EMSpaceEditor : public juce::AudioProcessorEditor,
+                      private juce::Timer {
+public:
+    explicit EMSpaceEditor(EMSpacePlugin&);
+    ~EMSpaceEditor() override = default;
 
-```
-void paint(juce::Graphics&) override;
-void resized() override;
-```
+    void paint(juce::Graphics&) override;
+    void resized() override;
 
-private: void timerCallback() override;
+private:
+    void timerCallback() override;
 
-```
-AvalanchePlugin& processor;
-juce::GenericAudioProcessorEditor genericEditor;
+    EMSpacePlugin& proc_;
 
-// Cached meter levels for painting
-struct MeterState {
-    float peakDb = -100.0f;
-    float rmsDb  = -100.0f;
-    float peakHold = -100.0f;
-    float holdTimer = 0.0f;
+    // --- Delay knobs ---
+    juce::Slider timeKnob, repeatsKnob, toneKnob, dMixKnob;
+    juce::Label  timeLabel, repeatsLabel, toneLabel, dMixLabel;
+
+    // --- Reverb knobs ---
+    juce::Slider decayKnob, dampingKnob, rMixKnob;
+    juce::Label  decayLabel, dampingLabel, rMixLabel;
+
+    // --- Shared knobs ---
+    juce::Slider diffKnob, crossFeedKnob, modSpeedKnob, modDepthKnob;
+    juce::Label  diffLabel, crossFeedLabel, modSpeedLabel, modDepthLabel;
+
+    // Attachments (11)
+    using Att = juce::AudioProcessorValueTreeState::SliderAttachment;
+    std::unique_ptr<Att> timeAtt, repeatsAtt, toneAtt, dMixAtt;
+    std::unique_ptr<Att> decayAtt, dampingAtt, rMixAtt;
+    std::unique_ptr<Att> diffAtt, crossFeedAtt, modSpeedAtt, modDepthAtt;
+
+    // Preset
+    juce::ComboBox presetBox;
+    juce::TextButton saveBtn{"Save"}, delBtn{"Del"};
+
+    // Background image
+    juce::Image bgImage;
+    juce::TextButton imgBtn{"Img"};
+    juce::Slider opacityKnob;
+    juce::Label opacityLabel;
+    float imgOpacity_ = 0.3f;
+
+    // Level meters (cached from atomic)
+    float inLevel_  = 0.0f;
+    float outLevel_ = 0.0f;
+
+    void setupKnob(juce::Slider&, juce::Label&,
+                   const juce::String&, juce::Colour);
+    void refreshPresetList();
+    void loadBgImage();
+    juce::File getImgSettingsFile() const;
+    void saveImgPath(const juce::File&);
+    void restoreImgPath();
+    void drawMeter(juce::Graphics&, juce::Rectangle<int>,
+                   float level, juce::Colour);
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EMSpaceEditor)
 };
-
-static constexpr int kNumMeters = 6;
-MeterState meters_[kNumMeters] = {};
-static constexpr const char* meterNames_[kNumMeters] = {
-    "INPUT", "DELAY", "REV.IN", "REV.OUT",
-    "X-FEED", "OUTPUT"
-};
-
-void drawMeter(juce::Graphics& g, juce::Rectangle<int> bounds,
-               const char* label, const MeterState& state);
-
-static juce::Colour levelToColour(float db);
-static float dbToX(float db, float width);
-
-JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AvalancheEditor)
+Copy
 ```
-
-};
